@@ -1,0 +1,2 @@
+1. npx tailwindcss -i ./src/input.css -o ./src/index.css --watch
+2. https://fonts.google.com/icons?selected=Material+Icons&icon.query=down
