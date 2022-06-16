@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.e34d7fee.css",
-    "main.js": "/static/js/main.44ec2e70.js",
-    "static/js/787.6f151cb3.chunk.js": "/static/js/787.6f151cb3.chunk.js",
-    "index.html": "/index.html",
-    "main.e34d7fee.css.map": "/static/css/main.e34d7fee.css.map",
-    "main.44ec2e70.js.map": "/static/js/main.44ec2e70.js.map",
-    "787.6f151cb3.chunk.js.map": "/static/js/787.6f151cb3.chunk.js.map"
+    "main.css": "/sports-betting/static/css/main.e34d7fee.css",
+    "main.js": "/sports-betting/static/js/main.0fee6cf3.js",
+    "static/js/787.6f151cb3.chunk.js": "/sports-betting/static/js/787.6f151cb3.chunk.js",
+    "index.html": "/sports-betting/index.html",
+    "main.e34d7fee.css.map": "/sports-betting/static/css/main.e34d7fee.css.map",
+    "main.0fee6cf3.js.map": "/sports-betting/static/js/main.0fee6cf3.js.map",
+    "787.6f151cb3.chunk.js.map": "/sports-betting/static/js/787.6f151cb3.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e34d7fee.css",
-    "static/js/main.44ec2e70.js"
+    "static/js/main.0fee6cf3.js"
   ]
 }
