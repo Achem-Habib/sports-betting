@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/sports-betting/static/css/main.bd0cdf0f.css",
-    "main.js": "/sports-betting/static/js/main.8d0b58d1.js",
+    "main.js": "/sports-betting/static/js/main.da0ca72a.js",
     "static/js/787.6f151cb3.chunk.js": "/sports-betting/static/js/787.6f151cb3.chunk.js",
     "static/media/cricket.jpg": "/sports-betting/static/media/cricket.7be88f3e8fa64d9b8c98.jpg",
     "index.html": "/sports-betting/index.html",
     "main.bd0cdf0f.css.map": "/sports-betting/static/css/main.bd0cdf0f.css.map",
-    "main.8d0b58d1.js.map": "/sports-betting/static/js/main.8d0b58d1.js.map",
+    "main.da0ca72a.js.map": "/sports-betting/static/js/main.da0ca72a.js.map",
     "787.6f151cb3.chunk.js.map": "/sports-betting/static/js/787.6f151cb3.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.bd0cdf0f.css",
-    "static/js/main.8d0b58d1.js"
+    "static/js/main.da0ca72a.js"
   ]
 }
