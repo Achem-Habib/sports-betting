@@ -1,33 +1,101 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "../context/AuthContext";
+import PrivateRoute from "../utils/PrivateRoute";
+import PublicRoute from "../utils/PublicRoute";
+import ClubMember from "./clubPages/ClubMember";
+import ClubSignin from "./clubPages/ClubSignin";
+import BetHistory from "./pages/BetHistory";
 import Deposit from "./pages/Deposit";
 import Example from "./pages/Example";
 import Home from "./pages/Home";
 import Layout from "./pages/Layout";
+import MyAccount from "./pages/MyAccount";
 import Navbar from "./pages/Navbar";
+import Placebet from "./pages/Placebet";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
-import Statement from "./pages/Statement";
 import TransactionHistory from "./pages/TransactionHistory";
 import Withdraw from "./pages/Withdraw";
 
 function App() {
   return (
     <BrowserRouter>
-      <Layout>
-        <Navbar />
+      <AuthProvider>
+        <Layout>
+          <Navbar />
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/statement" element={<Statement />} />
-          <Route path="/transaction" element={<TransactionHistory />} />
-          <Route path="/deposit" element={<Deposit />} />
-          <Route path="/withdraw" element={<Withdraw />} />
-
-          <Route path="/example" element={<Example />} />
-        </Routes>
-      </Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/signin"
+              element={
+                <PublicRoute>
+                  <Signin />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicRoute>
+                  <Signup />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/bet-history"
+              element={
+                <PrivateRoute>
+                  <BetHistory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/myaccount"
+              element={
+                <PrivateRoute>
+                  <MyAccount />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/transaction"
+              element={
+                <PrivateRoute>
+                  <TransactionHistory />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/deposit"
+              element={
+                <PrivateRoute>
+                  <Deposit />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/withdraw"
+              element={
+                <PrivateRoute>
+                  <Withdraw />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/placebet"
+              element={
+                <PrivateRoute>
+                  <Placebet />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/club-signin" element={<ClubSignin />} />
+            <Route path="/club-member" element={<ClubMember />} />
+            <Route path="/example" element={<Example />} />
+          </Routes>
+        </Layout>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

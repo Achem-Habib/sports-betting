@@ -1,8 +1,52 @@
-import { useState } from "react";
-import BetOption from "./BetOption";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import useWebSocket from "react-use-websocket";
+import BetQuestion from "./BetQuestion";
 
-export default function Match() {
+function Match({ match }) {
   const [show, setShow] = useState(true);
+  const [questions, setQuestions] = useState([]);
+  const [category, setCategory] = useState([]);
+
+  const [data, setData] = useState([]);
+
+  useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
+    onMessage: (e) => {
+      const message = JSON.parse(e.data);
+      setData(message);
+      console.log(message);
+    },
+    shouldReconnect: (closeEvent) => true,
+  });
+
+  useEffect(() => {
+    function getCategory() {
+      axios
+        .get(`http://localhost:8000/match-category/?id=${match.match_category}`)
+        .then((res) => {
+          setCategory(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    function getQuestions() {
+      axios
+        .get(`http://localhost:8000/questions/?id=${match.id}`)
+        .then((res) => {
+          setData();
+          setQuestions(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    getCategory();
+    getQuestions();
+  }, [data]);
+
   return (
     <div>
       <button
@@ -11,42 +55,21 @@ export default function Match() {
       >
         {/*Cricket*/}
         <span className="my-auto">
-          <svg
-            className="w-8 h-8 fill-red-700"
-            xmlns="http://www.w3.org/2000/svg"
-            enableBackground="new 0 0 24 24"
-            viewBox="0 0 24 24"
-            fill="#FFFFFF"
-          >
-            <g>
-              <rect fill="none" height="24" width="24" />
-            </g>
-            <g>
-              <g>
-                <g>
-                  <path d="M15.05,12.81L6.56,4.32c-0.39-0.39-1.02-0.39-1.41,0L2.32,7.15c-0.39,0.39-0.39,1.02,0,1.41l8.49,8.49 c0.39,0.39,1.02,0.39,1.41,0l2.83-2.83C15.44,13.83,15.44,13.2,15.05,12.81z" />
-                  <rect
-                    height="6"
-                    transform="matrix(0.7071 -0.7071 0.7071 0.7071 -8.5264 17.7562)"
-                    width="2"
-                    x="16.17"
-                    y="16.17"
-                  />
-                </g>
-                <circle cx="18.5" cy="5.5" r="3.5" />
-              </g>
-            </g>
-          </svg>
+          <img
+            className="w-10 h-10"
+            src={category.image}
+            alt={category.category}
+          />
         </span>
         <div className="flex flex-col leading-none">
-          <p className="text-slate-700 text-xs font-semibold ">
-            T20 International
+          <p className="text-slate-700 text-sm font-semibold ">
+            {match.team_1} <span>vs</span> {match.team_2}
           </p>
-          <p className="text-slate-700 text-xs font-semibold ">
-            India <span>VS</span> Pakistan
+          <p className="text-slate-700 text-sm font-semibold ">
+            {match.tournament_name}
           </p>
-          <p className="text-slate-700 text-xs font-semibold">
-            9 Jun 2022 @7:20 pm
+          <p className="text-slate-700 text-sm font-semibold">
+            {match.date} @{match.time}
           </p>
         </div>
 
@@ -76,13 +99,20 @@ export default function Match() {
       </button>
 
       <div className="w-full bg-gradient-to-r from-violet-900 to-violet-700 text-white py-1 px-4  font-semibold">
-        Score : 1000 run
+        Score : {match.score}
       </div>
       <div className={`${show ? "block" : "hidden"}`}>
-        <BetOption />
-        <BetOption />
-        <BetOption />
+        {questions.map((question) => (
+          <BetQuestion
+            key={question.id}
+            question={question}
+            match_info={match}
+            category={category}
+          />
+        ))}
       </div>
     </div>
   );
 }
+
+export default React.memo(Match);
