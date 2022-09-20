@@ -6,22 +6,13 @@ export default function TableHeader() {
           #
         </th>
         <th scope="col" className="py-3 px-6">
-          Match
+          Method
         </th>
         <th scope="col" className="py-3 px-6">
-          Question
-        </th>
-        <th scope="col" className="py-3 px-6">
-          Answer
+          To
         </th>
         <th scope="col" className="py-3 px-6">
           Amount
-        </th>
-        <th scope="col" className="py-3 px-6">
-          Return Rate
-        </th>
-        <th scope="col" className="py-3 px-6">
-          Return Amount
         </th>
         <th scope="col" className="py-3 px-6">
           Status

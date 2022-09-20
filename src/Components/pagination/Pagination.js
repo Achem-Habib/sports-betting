@@ -58,7 +58,11 @@ const Pagination = (props) => {
           <li key={index}>
             <button
               onClick={() => onPageChange(pageNumber)}
-              className="py-2 px-3 leading-tight   border  bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
+              className={`py-2 px-3 leading-tight border border-gray-700  hover:bg-gray-700 hover:text-white ${
+                currentPage === pageNumber
+                  ? "bg-blue-700 text-slate-100"
+                  : "text-gray-400 bg-gray-800"
+              }`}
             >
               {pageNumber}
             </button>

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
+import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
 import SportsCategory from "../Home/SportsCategory";
 
@@ -18,26 +19,28 @@ function Home() {
   useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
-      setData(message);
-      console.log(message);
+      if (message["Changed"] === "Match") {
+        setData(message);
+      }
     },
     shouldReconnect: (closeEvent) => true,
   });
 
   useEffect(() => {
     document.title = "Home";
-    axios
-      .get("http://localhost:8000/matches/")
-      .then((res) => {
+
+    async function getMatchList() {
+      try {
+        const res = await axios.get(`${url}/matches/`);
         setMatches(res.data);
         setData();
-      })
-      .catch((err) => {
+      } catch (err) {
         console.log(err);
-      });
-  }, [data]);
+      }
+    }
 
-  console.log("Home component is rendered");
+    getMatchList();
+  }, [data]);
 
   return (
     <div className="pt-14 md:pt-16">

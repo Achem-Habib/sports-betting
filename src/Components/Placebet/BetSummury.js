@@ -1,4 +1,6 @@
 export default function BetSummury({ betAmount, rate }) {
+  const return_amount = parseFloat(betAmount * rate).toFixed(2);
+
   return (
     <div>
       <div className="flex justify-between">
@@ -7,7 +9,7 @@ export default function BetSummury({ betAmount, rate }) {
       </div>
       <div className="flex justify-between">
         <p className="text-slate-900 font-semibold text-sm">Possible Return</p>
-        <p className="font-bold text-slate-900 text-sm">{betAmount * rate}</p>
+        <p className="font-bold text-slate-900 text-sm">{return_amount}</p>
       </div>
     </div>
   );

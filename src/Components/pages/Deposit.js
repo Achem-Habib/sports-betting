@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
 import Input from "../Form/Input";
 import RadioInput from "../Form/RadioInput";
@@ -18,54 +18,70 @@ export default function Deposit() {
   const [amount, setAmount] = useState("");
   const [transNumber, setTransNumber] = useState("");
 
+  const [lowestLimit, setLowestLimit] = useState();
+  const [highestLimit, setHighestLimit] = useState();
+
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     document.title = "Deposit Request";
+
+    async function getMethod() {
+      try {
+        let res = await axios.get(`${url}/transactions/deposit-method/`);
+        if (res) {
+          let data = res.data;
+          let new_method = [];
+          data.map((d) => new_method.push(d.method_name));
+          setMethod(new_method);
+          setMethodName(new_method[0]);
+          getNumber(new_method[0]);
+        }
+      } catch (err) {
+        setError("Somethind is wrong. Check your internet connection!");
+      }
+    }
+
+    async function depositLimit() {
+      try {
+        let res = await axios.get(`${url}/transactions/deposit-limit/`);
+        if (res) {
+          let data = res.data;
+          data.map((d) => {
+            setLowestLimit(d.lowest_limit);
+            setHighestLimit(d.highest_limit);
+
+            return "";
+          });
+        }
+      } catch (err) {
+        setError(
+          "Something is wrong. Check your internet connection and refresh the page."
+        );
+      }
+    }
+
     getMethod();
+    depositLimit();
   }, []);
 
-  function getMethod() {
-    axios
-      .get("http://127.0.0.1:8000/transactions/deposit-method/")
-      .then((res) => {
-        let data = res.data;
-        let new_method = [];
-        data.map((d) => new_method.push(d.method_name));
-
-        return new_method;
-      })
-      .then((res) => {
-        setMethod(res);
-        setMethodName(res[0]);
-        getNumber(res[0]);
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-      });
-  }
-
-  function getNumber(name) {
-    axios
-      .get(`http://127.0.0.1:8000/transactions/deposit-number/?name=${name}`)
-      .then((res) => {
+  async function getNumber(name) {
+    try {
+      let res = await axios.get(
+        `${url}/transactions/deposit-number/?name=${name}`
+      );
+      if (res) {
         let data = res.data;
         let new_number = [];
         data.map((d) => new_number.push(d.number));
-
-        return new_number;
-      })
-      .then((res) => {
-        setNumber(res);
-        setSendTo(res[0]);
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-      });
+        setNumber(new_number);
+        setSendTo(new_number[0]);
+      }
+    } catch (err) {
+      setError("Somethind is wrong. Check your internet connection!");
+    }
   }
 
   function handleMethodChange(e) {
@@ -73,7 +89,7 @@ export default function Deposit() {
     getNumber(e.target.value);
   }
 
-  function depositRequest(
+  async function depositRequest(
     user,
     method,
     send_to,
@@ -99,20 +115,26 @@ export default function Deposit() {
       transaction_number,
     });
 
-    axios
-      .post("http://127.0.0.1:8000/transactions/deposit-request/", body, config)
-      .then((res) => {
+    try {
+      let res = await axios.post(
+        `${url}/transactions/deposit-request/`,
+        body,
+        config
+      );
+      if (res) {
         setLoading(false);
+        setError("");
         setSendFrom("");
         setAmount("");
         setTransNumber("");
         setIsOpen(true);
-      })
-      .catch((err) => {
-        setError(
-          "Something is wrong.Check your Internet connection and the information you provide!"
-        );
-      });
+      }
+    } catch (err) {
+      setLoading(false);
+      setError(
+        "Something is wrong. Check your internet connection and the information you provide!"
+      );
+    }
   }
 
   async function handleSubmit(e) {
@@ -120,13 +142,23 @@ export default function Deposit() {
     e.preventDefault();
     let fromRegex = new RegExp("(?:\\+88|88)?(01[3-9]\\d{8})");
     if (!fromRegex.test(sendFrom)) {
-      return setError("Mobile number is not valid. Enter a valid phone number");
+      return setError(
+        "Mobile number is not valid. Enter a valid phone number."
+      );
     }
 
     if (isNaN(amount)) {
       return setError(
-        "The amount you enter is not valid. Enter a valid amount"
+        "The amount you enter is not valid. Enter a valid amount."
       );
+    }
+
+    if (lowestLimit && highestLimit) {
+      if (amount < lowestLimit || amount > highestLimit) {
+        return setError(
+          `Deposit amount must be greater than ${lowestLimit} tk and less than ${highestLimit} tk.`
+        );
+      }
     }
 
     await depositRequest(
@@ -153,15 +185,6 @@ export default function Deposit() {
             className="mx-auto w-full max-w-md space-y-6"
             onSubmit={handleSubmit}
           >
-            {error ? (
-              <div className="">
-                <p className="text-center text-lg font-semibold text-red-500">
-                  {error}
-                </p>
-              </div>
-            ) : (
-              ""
-            )}
             <div className="flex flex-col gap-y-4 shadow-sm -space-y-px">
               <RadioInput
                 id="method"
@@ -204,6 +227,16 @@ export default function Deposit() {
                 required
               />
             </div>
+
+            {error ? (
+              <div className="">
+                <p className="text-center text-md font-medium text-red-500">
+                  {error}
+                </p>
+              </div>
+            ) : (
+              ""
+            )}
 
             <div>
               <button

@@ -6,28 +6,19 @@ export default function TableHeader() {
           #
         </th>
         <th scope="col" className="py-3 px-6">
-          Match
+          Username
         </th>
         <th scope="col" className="py-3 px-6">
-          Question
+          Joining Date
         </th>
         <th scope="col" className="py-3 px-6">
-          Answer
+          Recent Bet Date
         </th>
         <th scope="col" className="py-3 px-6">
-          Amount
+          Total Bet(tk)
         </th>
         <th scope="col" className="py-3 px-6">
-          Return Rate
-        </th>
-        <th scope="col" className="py-3 px-6">
-          Return Amount
-        </th>
-        <th scope="col" className="py-3 px-6">
-          Status
-        </th>
-        <th scope="col" className="py-3 px-6">
-          Date and Time
+          Comission Earned(tk)
         </th>
       </tr>
     </thead>

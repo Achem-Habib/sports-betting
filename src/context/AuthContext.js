@@ -2,6 +2,7 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { url } from "../constants/urls";
 
 const AuthContext = createContext();
 
@@ -18,40 +19,59 @@ export const AuthProvider = ({ children }) => {
       ? jwt_decode(localStorage.getItem("authTokens"))
       : null
   );
-  const [loading, setLoading] = useState(true);
+
+  const [authLoading, setAuthLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  function loginUser(username, password) {
+  async function loginUser(username, password, setLoading, setError) {
     const config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
 
+    setLoading(true);
+    setError();
+
     // Request Body
     const body = JSON.stringify({ username, password });
 
-    axios
-      .post("http://127.0.0.1:8000/accounts/token/", body, config)
-      .then((res) => {
+    try {
+      let res = await axios.post(`${url}/accounts/token/`, body, config);
+      if (res) {
         const data = res.data;
         setAuthTokens(data);
         setUser(jwt_decode(data.access));
         localStorage.setItem("authTokens", JSON.stringify(data));
-        navigate("/myaccount");
-      })
-      .catch((err) => console.log(err.response.data));
+        setLoading(false);
+        setError();
+        navigate("/");
+      }
+    } catch (err) {
+      setLoading(false);
+      if (err.response.data) {
+        setError(
+          "Username or password is incorrect.Please enter valid username and password!"
+        );
+      } else {
+        setError("Something is wrong. Check your internet connection!");
+      }
+    }
   }
 
-  function registerUser(
+  async function registerUser(
     username,
     email,
     mobile_number,
     password,
     password2,
-    club_name
+    club_name,
+    setLoading,
+    setError
   ) {
+    setLoading(true);
+    setError();
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -68,21 +88,30 @@ export const AuthProvider = ({ children }) => {
       club_name,
     });
 
-    axios
-      .post("http://127.0.0.1:8000/accounts/register/", body, config)
-      .then((res) => {
-        loginUser(username, password);
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-      });
+    try {
+      let res = await axios.post(`${url}/accounts/register/`, body, config);
+      if (res) {
+        loginUser(username, password, setLoading, setError);
+      }
+    } catch (err) {
+      setLoading(false);
+      if (err.response.data) {
+        if (err.response.data.error) {
+          setError(err.response.data["error"]);
+        } else if (err.response.data.username) {
+          setError(err.response.data["username"]);
+        }
+      } else {
+        setError("Something is wrong.Check your internet connection!");
+      }
+    }
   }
 
   const logoutUser = () => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
-    navigate("/signin");
+    navigate("/");
   };
 
   const contextData = {
@@ -99,12 +128,12 @@ export const AuthProvider = ({ children }) => {
     if (authTokens) {
       setUser(jwt_decode(authTokens.access));
     }
-    setLoading(false);
-  }, [authTokens, loading]);
+    setAuthLoading(false);
+  }, [authTokens, authLoading]);
 
   return (
     <AuthContext.Provider value={contextData}>
-      {loading ? null : children}
+      {authLoading ? null : children}
     </AuthContext.Provider>
   );
 };

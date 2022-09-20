@@ -6,6 +6,12 @@ export default function TableHeader() {
           #
         </th>
         <th scope="col" className="py-3 px-6">
+          Username
+        </th>
+        <th scope="col" className="py-3 px-6">
+          Date and Time
+        </th>
+        <th scope="col" className="py-3 px-6">
           Match
         </th>
         <th scope="col" className="py-3 px-6">
@@ -25,9 +31,6 @@ export default function TableHeader() {
         </th>
         <th scope="col" className="py-3 px-6">
           Status
-        </th>
-        <th scope="col" className="py-3 px-6">
-          Date and Time
         </th>
       </tr>
     </thead>

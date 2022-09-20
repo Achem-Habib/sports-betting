@@ -1,36 +1,70 @@
-import { useContext, useState } from "react";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
 import Input from "../Form/Input";
 import RadioInput from "../Form/RadioInput";
 
 export default function Signup() {
-  const clubName = ["win", "lose", "abc", "def"];
+  const [clubName, setClubName] = useState([]);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [club, setClub] = useState(clubName[0]);
+  const [club, setClub] = useState();
   const { registerUser } = useContext(AuthContext);
 
-  const [error, setError] = useState();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    document.title = "Sign up";
+    async function getClubName() {
+      try {
+        let res = await axios.get(`${url}/accounts/club-name`);
+        let data = res.data;
+        let clubs = [];
+        data.map((d) => {
+          if (d.is_staff) {
+            clubs.push(d.username);
+          }
+          return "";
+        });
+        data.map((d) => {
+          if (!d.is_staff) {
+            clubs.push(d.username);
+          }
+          return "";
+        });
+        setClub(clubs[0]);
+        setClubName(clubs);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    getClubName();
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      return setError("Passwords don't match");
+    if (!club) {
+      setError("Club field is required!");
+    } else {
+      await registerUser(
+        username,
+        email,
+        number,
+        password,
+        confirmPassword,
+        club,
+        setLoading,
+        setError
+      );
     }
-
-    await registerUser(
-      username,
-      email,
-      number,
-      password,
-      confirmPassword,
-      club
-    );
   }
 
   return (
@@ -43,7 +77,7 @@ export default function Signup() {
             </h2>
           </div>
           <form
-            className="mx-auto w-full max-w-md space-y-6"
+            className="mx-auto w-full max-w-md space-y-3"
             onSubmit={handleSubmit}
           >
             <div className="flex flex-col gap-y-4 shadow-sm -space-y-px">
@@ -96,17 +130,24 @@ export default function Signup() {
               />
             </div>
 
+            {error ? (
+              <p className="text-red-500 text-center text-lg ">{error}</p>
+            ) : (
+              ""
+            )}
+
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                disabled={loading}
+                className="group relative w-full flex justify-center mt-4 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
               >
-                Create account
+                {loading ? "Processing..." : "Create account"}
               </button>
             </div>
           </form>
         </div>
-        {error ? <p className="text-white">{error}</p> : ""}
+
         <div className="text-slate-100 text-md mt-4 text-center">
           If you have an account,You can just{" "}
           <Link

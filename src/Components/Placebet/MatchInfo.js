@@ -1,3 +1,5 @@
+import DateTime from "../DateTime";
+
 export default function MatchInfo({ setIsOpen, match_info, category }) {
   return (
     <div className="relative flex bg-purple-800 rounded-t-md py-2">
@@ -16,7 +18,7 @@ export default function MatchInfo({ setIsOpen, match_info, category }) {
           {match_info.tournament_name}
         </p>
         <p className="text-sm font-extralight text-slate-100">
-          {match_info.date} @{match_info.time}
+          <DateTime date_time={match_info.date_time} />
         </p>
       </div>
       <button

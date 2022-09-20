@@ -1,16 +1,19 @@
 import axios from "axios";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
-import Tablebody from "../BetHistory/TableBody";
-import TableHeader from "../BetHistory/TableHeader";
+import TableBody from "../ClubHistory/TableBody";
+import TableHeader from "../ClubHistory/TableHeader";
+import Search from "../ClubMember/Search";
 import Pagination from "../pagination/Pagination";
 
-export default function BetHistory() {
+export default function ClubHistory() {
   const options = [10, 20, 30, 40];
   const [currentPage, setCurrentPage] = useState(1);
   const [PageSize, setPageSize] = useState(options[0]);
-  const [betHistory, setBetHistory] = useState([]);
+  const [clubHistory, setClubHistory] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
   const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
@@ -21,20 +24,21 @@ export default function BetHistory() {
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * PageSize;
     const lastPageIndex = firstPageIndex + PageSize;
-    return betHistory.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage, betHistory, PageSize]);
+    return searchResult.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, searchResult, PageSize]);
 
   useEffect(() => {
-    document.title = "Bet History";
+    document.title = "Club History";
 
-    async function fetchBetHistory() {
+    async function fetchClubHistory() {
       setLoading(true);
       try {
         let res = await axios.get(
-          `${url}/place-bet/?username=${user.username}`
+          `${url}/place-bet/club-history/?club_name=${user.username}`
         );
         if (res) {
-          setBetHistory(res.data);
+          setClubHistory(res.data);
+          setSearchResult(res.data);
           setLoading(false);
         }
       } catch (err) {
@@ -45,8 +49,26 @@ export default function BetHistory() {
       }
     }
 
-    fetchBetHistory();
+    fetchClubHistory();
   }, [user.username]);
+
+  function search(e) {
+    e.preventDefault();
+    setCurrentPage(1);
+    let result = [];
+    if (searchInput) {
+      clubHistory.map((history) => {
+        if (history.username === searchInput) {
+          result.push(history);
+        }
+        return "";
+      });
+
+      setSearchResult(result);
+    } else {
+      setSearchResult(clubHistory);
+    }
+  }
 
   return (
     <div>
@@ -67,12 +89,12 @@ export default function BetHistory() {
       )}
 
       {!loading && !error && (
-        <div className="pt-16 md:pt-20 flex flex-col gap-y-4 mx-2 mb-10">
+        <div className="pt-16 md:pt-20 flex flex-col gap-y-4 mx-2 pb-16">
           <h2 className=" text-center text-3xl font-extrabold text-teal-400">
-            Bet history
+            Club History
           </h2>
-          {currentPage === 1 && (
-            <div className="flex flex-col  gap-y-4 ">
+          <div className="flex flex-col  gap-y-4 ">
+            {currentPage === 1 && (
               <div className="flex flex-col  max-w-md gap-y-1 ">
                 <label className="text-gray-200 font-semibold" htmlFor="show">
                   Show
@@ -90,13 +112,19 @@ export default function BetHistory() {
                   ))}
                 </select>
               </div>
-            </div>
-          )}
+            )}
+
+            <Search
+              searchInput={searchInput}
+              setSearchInput={setSearchInput}
+              search={search}
+            />
+          </div>
 
           <div className="overflow-x-auto relative shadow-md sm:rounded-lg ">
             <table className="w-full text-sm text-left text-gray-200">
               <TableHeader />
-              <Tablebody
+              <TableBody
                 currentTableData={currentTableData}
                 startIndex={startIndex}
               />
@@ -105,7 +133,7 @@ export default function BetHistory() {
           <Pagination
             className="flex"
             currentPage={currentPage}
-            totalCount={betHistory.length}
+            totalCount={searchResult.length}
             pageSize={PageSize}
             onPageChange={(page) => setCurrentPage(page)}
           />

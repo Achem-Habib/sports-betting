@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
+import { url } from "../../constants/urls";
+import DateTime from "../DateTime";
 import BetQuestion from "./BetQuestion";
 
 function Match({ match }) {
@@ -13,34 +15,34 @@ function Match({ match }) {
   useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
-      setData(message);
-      console.log(message);
+
+      if (message["Changed"] === "BetQuestion") {
+        setData(message);
+      }
     },
     shouldReconnect: (closeEvent) => true,
   });
 
   useEffect(() => {
-    function getCategory() {
-      axios
-        .get(`http://localhost:8000/match-category/?id=${match.match_category}`)
-        .then((res) => {
-          setCategory(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    async function getCategory() {
+      try {
+        let res = await axios.get(
+          `${url}/match-category/?id=${match.match_category}`
+        );
+        setCategory(res.data);
+      } catch (err) {
+        console.log(err);
+      }
     }
 
-    function getQuestions() {
-      axios
-        .get(`http://localhost:8000/questions/?id=${match.id}`)
-        .then((res) => {
-          setData();
-          setQuestions(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    async function getQuestions() {
+      try {
+        let res = await axios.get(`${url}/questions/?id=${match.id}`);
+        setData();
+        setQuestions(res.data);
+      } catch (err) {
+        console.log(err);
+      }
     }
 
     getCategory();
@@ -53,7 +55,6 @@ function Match({ match }) {
         onClick={() => setShow(!show)}
         className="flex w-full justify-between bg-white rounded-t-md  gap-x-6 px-2 py-2 "
       >
-        {/*Cricket*/}
         <span className="my-auto">
           <img
             className="w-10 h-10"
@@ -69,7 +70,7 @@ function Match({ match }) {
             {match.tournament_name}
           </p>
           <p className="text-slate-700 text-sm font-semibold">
-            {match.date} @{match.time}
+            <DateTime date_time={match.date_time} />
           </p>
         </div>
 

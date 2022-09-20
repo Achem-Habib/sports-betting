@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import Input from "../Form/Input";
@@ -8,13 +8,17 @@ export default function Signin() {
   const [password, setPassword] = useState("");
   const { loginUser } = useContext(AuthContext);
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    document.title = "Sign in";
+  });
+
   async function handleSubmit(e) {
     e.preventDefault();
-    try {
-      await loginUser(username, password);
-    } catch (err) {
-      console.log(err.response.data);
-    }
+
+    await loginUser(username, password, setLoading, setError);
   }
 
   return (
@@ -27,7 +31,7 @@ export default function Signin() {
                 Sign in to your account
               </h2>
             </div>
-            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <form className="mt-8 space-y-3" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-y-4 shadow-sm -space-y-px">
                 <Input
                   id="user-name"
@@ -47,22 +51,18 @@ export default function Signin() {
                 />
               </div>
 
-              <div className="text-sm flex justify-end">
-                <a
-                  href="#"
-                  className="font-medium text-lime-300 hover:text-indigo-500"
-                >
-                  {" "}
-                  Forgot your password?
-                </a>
-              </div>
+              {error ? (
+                <p className="text-red-500 text-center text-lg ">{error}</p>
+              ) : (
+                ""
+              )}
 
               <div>
                 <button
                   type="submit"
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                  className="group relative w-full flex justify-center mt-6 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
                 >
-                  Sign in
+                  {loading ? "Processing..." : " Sign in"}
                 </button>
               </div>
             </form>

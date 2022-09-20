@@ -1,30 +1,43 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useWebSocket from "react-use-websocket";
+import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
 
 function Header({ showSidebar, setShowSidebar }) {
   const { user } = useContext(AuthContext);
   const [balance, setBalance] = useState();
+  const [data, setData] = useState([]);
+
+  const fixedBalance = parseFloat(balance).toFixed(2);
+
+  useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
+    onMessage: (e) => {
+      const message = JSON.parse(e.data);
+      setData(message);
+    },
+    shouldReconnect: (closeEvent) => true,
+  });
 
   useEffect(() => {
+    async function getBalance(name) {
+      try {
+        let res = await axios.get(`${url}/accounts/balance/?user_name=${name}`);
+        if (res) {
+          setData();
+          let data = res.data;
+          setBalance(data["balance"]);
+        }
+      } catch (err) {
+        console.log("Something is wrong");
+      }
+    }
+
     if (user) {
       getBalance(user.username);
     }
-  }, []);
-
-  function getBalance(name) {
-    console.log("getBalance is called");
-    axios
-      .get(`http://127.0.0.1:8000/accounts/balance/?user_name=${name}`)
-      .then((res) => {
-        let data = res.data;
-        setBalance(data["balance"]);
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-      });
-  }
+  }, [data, user]);
 
   return (
     <header className=" relative">
@@ -50,16 +63,16 @@ function Header({ showSidebar, setShowSidebar }) {
 
         {user ? (
           <div className="md:hidden flex gap-x-1">
-            <span className="flex gap-x-1 bg-white py-0.5  px-2 rounded-md">
+            <span className="flex gap-x-1 bg-white py-1  px-2 rounded-md">
               <p className="text-slate-800 text-sm my-auto font-semibold">
-                {balance} tk
+                {isNaN(fixedBalance) ? "" : `${fixedBalance}`} tk
               </p>
             </span>
             <Link
               to="/deposit"
               className="text-fuchsia-500 my-auto  text-center text-2xl  font-semibold"
             >
-              +
+              {user.club_holder ? "" : "+"}
             </Link>
           </div>
         ) : (
@@ -68,16 +81,16 @@ function Header({ showSidebar, setShowSidebar }) {
 
         {user ? (
           <div className="hidden md:flex gap-x-1">
-            <span className="flex gap-x-1 bg-white  px-2 rounded-md">
+            <span className="flex gap-x-1 bg-white  px-2 py-1 rounded-md">
               <p className="text-slate-800 text-sm my-auto font-semibold">
-                {balance} tk
+                {isNaN(fixedBalance) ? "" : `${fixedBalance}`} tk
               </p>
             </span>
             <Link
               to="/deposit"
               className="text-fuchsia-500 my-auto  text-center text-2xl  font-semibold"
             >
-              +
+              {user.club_holder ? "" : "+"}
             </Link>
           </div>
         ) : (
@@ -86,7 +99,7 @@ function Header({ showSidebar, setShowSidebar }) {
               to="/signin"
               className="hidden font-medium text-white md:block hover:text-slate-300"
             >
-              Sign in
+              Log in
             </Link>
             <span className="hidden w-px h-6 bg-gray-200 md:block"></span>
             <Link

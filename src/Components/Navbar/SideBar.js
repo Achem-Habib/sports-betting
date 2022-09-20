@@ -1,6 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useContext } from "react";
-import { Link } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import SideMenuItem from "./SideMenuItem";
 
@@ -48,22 +47,10 @@ function SideBar({ showSidebar, setShowSidebar }) {
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
                           </svg>
                         </span>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col my-auto">
                           <span className="font-semibold text-md text-white ">
                             Hello, {user ? user.username : ""}
                           </span>
-                          {user ? (
-                            <Link
-                              to="/myaccount"
-                              className=" text-sm text-lime-400 font-medium text-center"
-                            >
-                              My account
-                            </Link>
-                          ) : (
-                            <p className="text-sm text-slate-100 font-medium">
-                              Login or create account to get your profile
-                            </p>
-                          )}
                         </div>
                       </div>
 
@@ -86,10 +73,103 @@ function SideBar({ showSidebar, setShowSidebar }) {
 
                     <div className=" ">
                       <div className="flex flex-col pt-4 h-full ">
-                        <SideMenuItem to="/">Home</SideMenuItem>
-                        {user ? (
-                          <SideMenuItem to="/bet-history">
+                        <SideMenuItem to="/" setShowSidebar={setShowSidebar}>
+                          Home
+                        </SideMenuItem>
+                        {user && !user.club_holder ? (
+                          <SideMenuItem
+                            to="/bet-history"
+                            setShowSidebar={setShowSidebar}
+                          >
                             Bet history
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user && user.club_holder ? (
+                          <SideMenuItem
+                            to="/club-member"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Club Member
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user && user.club_holder ? (
+                          <SideMenuItem
+                            to="/club-history"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Club history
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user && !user.club_holder ? (
+                          <SideMenuItem
+                            to="/deposit-history"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Deposit history
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user ? (
+                          <SideMenuItem
+                            to="/withdraw-history"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Withdraw history
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user && !user.club_holder ? (
+                          <SideMenuItem
+                            to="/deposit"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Deposit
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user ? (
+                          <SideMenuItem
+                            to="/withdraw"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Withdraw
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user && !user.club_holder ? (
+                          <SideMenuItem
+                            to="/change-club"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Change club
+                          </SideMenuItem>
+                        ) : (
+                          ""
+                        )}
+
+                        {user ? (
+                          <SideMenuItem
+                            to="/change-password"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Change password
                           </SideMenuItem>
                         ) : (
                           ""
@@ -98,7 +178,10 @@ function SideBar({ showSidebar, setShowSidebar }) {
                         {user ? (
                           ""
                         ) : (
-                          <SideMenuItem to="/signup">
+                          <SideMenuItem
+                            to="/signup"
+                            setShowSidebar={setShowSidebar}
+                          >
                             Create account
                           </SideMenuItem>
                         )}
@@ -106,13 +189,21 @@ function SideBar({ showSidebar, setShowSidebar }) {
                         {user ? (
                           ""
                         ) : (
-                          <SideMenuItem to="/signin">Log in</SideMenuItem>
+                          <SideMenuItem
+                            to="/signin"
+                            setShowSidebar={setShowSidebar}
+                          >
+                            Log in
+                          </SideMenuItem>
                         )}
 
                         {user ? (
                           <div
-                            onClick={logoutUser}
-                            className="border-b items-start border-slate-600 py-4 px-4  hover:bg-blue-800"
+                            onClick={() => {
+                              setShowSidebar(false);
+                              logoutUser();
+                            }}
+                            className="border-b items-start border-slate-600 py-4 px-4  hover:bg-blue-800 hover:cursor-pointer"
                           >
                             <div className="block p-2 -m-2 font-medium text-slate-100">
                               Log out

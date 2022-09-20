@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
+import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
 import Placebet from "../pages/Placebet";
 
@@ -12,30 +12,50 @@ function BetQuestion({ question, match_info, category }) {
   const [answer, setAnswer] = useState();
   const [rate, setRate] = useState();
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const [userActive, setUserActive] = useState();
+  const [clubHolder, setClubHolder] = useState(true);
 
   const [data, setData] = useState([]);
 
   useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
-      setData(message);
-      console.log(message);
+      if (message["Changed"] === "BetRate") {
+        setData(message);
+      }
     },
     shouldReconnect: (closeEvent) => true,
   });
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8000/betrates/?id=${question.id}`)
-      .then((res) => {
+    async function userIsActive(name) {
+      try {
+        let res = await axios.get(`${url}/accounts/balance/?user_name=${name}`);
+        if (res) {
+          setData();
+          let data = res.data;
+          setUserActive(data["is_active"]);
+        }
+      } catch (err) {
+        console.log("Something is wrong");
+      }
+    }
+    async function getBetRates() {
+      try {
+        let res = await axios.get(`${url}/betrates/?id=${question.id}`);
         setData();
         setBetRates(res.data);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.log(err);
-      });
-  }, [data]);
+      }
+    }
+    getBetRates();
+
+    if (user) {
+      userIsActive(user.username);
+      setClubHolder(user.club_holder);
+    }
+  }, [question.id, user, data]);
 
   return (
     <>
@@ -48,13 +68,18 @@ function BetQuestion({ question, match_info, category }) {
             <div key={betRate.id} className="relative flex">
               <button
                 type="button"
+                disabled={!question.active || !userActive || clubHolder}
                 onClick={() => {
                   setAnswerId(betRate.id);
                   setAnswer(betRate.bet_answer);
                   setRate(betRate.rate);
                   setIsOpen(true);
                 }}
-                className="bg-gradient-to-r w-full from-blue-700 to-blue-900 flex justify-between px-2 py-1 rounded-md"
+                className={`w-full  flex justify-between px-2 py-1 rounded-md ${
+                  question.active
+                    ? "bg-gradient-to-r from-blue-700 to-blue-900"
+                    : "bg-red-700"
+                }`}
               >
                 <span className="text-white text-sm">{betRate.bet_answer}</span>
                 <span className="text-white text-sm font-bold">
