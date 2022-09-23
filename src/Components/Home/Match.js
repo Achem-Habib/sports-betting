@@ -12,7 +12,7 @@ function Match({ match }) {
 
   const [data, setData] = useState([]);
 
-  useWebSocket(`wss://${websocket_url}/ws/job-status/`, {
+  useWebSocket(`ws://${websocket_url}/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
 
