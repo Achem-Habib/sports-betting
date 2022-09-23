@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
-import { url } from "../../constants/urls";
+import { url, websocket_url } from "../../constants/urls";
 import DateTime from "../DateTime";
 import BetQuestion from "./BetQuestion";
 
@@ -12,7 +12,7 @@ function Match({ match }) {
 
   const [data, setData] = useState([]);
 
-  useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
+  useWebSocket(`wss://${websocket_url}/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
 
