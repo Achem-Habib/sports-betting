@@ -225,13 +225,15 @@ export default function Placebet({
     }
   }
 
+  function closeModal() {
+    setMessage();
+    setError();
+    setIsOpen(false);
+  }
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-10"
-        onClose={() => setIsOpen(false)}
-      >
+      <Dialog as="div" className="relative z-10" onClose={closeModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -258,7 +260,7 @@ export default function Placebet({
               <Dialog.Panel className=" transform w-full max-w-md transition-all">
                 <div className="mx-2 bg-white    rounded-md">
                   <MatchInfo
-                    setIsOpen={setIsOpen}
+                    closeModal={closeModal}
                     match_info={match_info}
                     category={category}
                   />

@@ -173,7 +173,7 @@ export default function Deposit() {
 
   return (
     <>
-      <div className="pt-16 md:pt-20 pb-10">
+      <div className="pt-20 pb-10">
         <div className="flex flex-col gap-y-8 mx-2 ">
           <div>
             <h2 className=" text-center text-3xl font-extrabold text-teal-400">

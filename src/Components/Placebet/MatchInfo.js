@@ -1,6 +1,6 @@
 import DateTime from "../DateTime";
 
-export default function MatchInfo({ setIsOpen, match_info, category }) {
+export default function MatchInfo({ closeModal, match_info, category }) {
   return (
     <div className="relative flex bg-purple-800 rounded-t-md py-2">
       <span className="my-auto pl-2">
@@ -10,21 +10,19 @@ export default function MatchInfo({ setIsOpen, match_info, category }) {
           alt={category.category}
         />
       </span>
-      <div className="leading-none mx-auto">
-        <p className="text-md text-slate-100">
+
+      <div className="flex flex-col leading-none mx-auto">
+        <p className="text-slate-100 text-sm font-semibold mx-auto">
           {match_info.team_1} <span>vs</span> {match_info.team_2}
         </p>
-        <p className="text-sm font-extralight text-slate-100">
+        <p className="text-slate-100 text-sm font-semibold mx-auto">
           {match_info.tournament_name}
         </p>
-        <p className="text-sm font-extralight text-slate-100">
+        <p className="text-slate-100 text-sm font-semibold mx-auto">
           <DateTime date_time={match_info.date_time} />
         </p>
       </div>
-      <button
-        onClick={() => setIsOpen(false)}
-        className="absolute right-0 top-0"
-      >
+      <button onClick={closeModal} className="absolute right-0 top-0">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

@@ -7,6 +7,10 @@ export default function Success({ isOpen, setIsOpen, title, message }) {
     setIsOpen(false);
   }
 
+  function openModal() {
+    setIsOpen(true);
+  }
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={closeModal}>

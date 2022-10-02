@@ -52,7 +52,7 @@ export default function BetHistory() {
     <div>
       {loading && (
         <div className="relative h-screen w-screen">
-          <h1 className="absolute font-semibold text-white text-center top-1/2 left-1/2">
+          <h1 className="absolute font-semibold text-white top-1/2 w-full text-center  ">
             Loading...
           </h1>
         </div>
@@ -60,14 +60,14 @@ export default function BetHistory() {
 
       {error && (
         <div className="relative h-screen w-screen">
-          <h1 className="absolute font-semibold text-red-500 text-center top-1/2  left-1/3">
+          <h1 className="absolute font-semibold text-red-500  top-1/2  w-full text-center">
             {error}
           </h1>
         </div>
       )}
 
       {!loading && !error && (
-        <div className="pt-16 md:pt-20 flex flex-col gap-y-4 mx-2 mb-10">
+        <div className="pt-20  flex flex-col gap-y-4 mx-2 mb-10">
           <h2 className=" text-center text-3xl font-extrabold text-teal-400">
             Bet history
           </h2>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
-import { url, websocket_url } from "../../constants/urls";
+import { url } from "../../constants/urls";
 import DateTime from "../DateTime";
 import BetQuestion from "./BetQuestion";
 
@@ -12,7 +12,7 @@ function Match({ match }) {
 
   const [data, setData] = useState([]);
 
-  useWebSocket(`ws://${websocket_url}/ws/job-status/`, {
+  useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
 
@@ -53,7 +53,7 @@ function Match({ match }) {
     <div>
       <button
         onClick={() => setShow(!show)}
-        className="flex w-full justify-between bg-white rounded-t-md  gap-x-6 px-2 py-2 "
+        className="flex w-full justify-between bg-yellow-300 rounded-t-md  gap-x-6 px-2 py-2 "
       >
         <span className="my-auto">
           <img
@@ -63,13 +63,13 @@ function Match({ match }) {
           />
         </span>
         <div className="flex flex-col leading-none">
-          <p className="text-slate-700 text-sm font-semibold ">
+          <p className="text-slate-900 text-sm font-semibold ">
             {match.team_1} <span>vs</span> {match.team_2}
           </p>
-          <p className="text-slate-700 text-sm font-semibold ">
+          <p className="text-slate-900 text-sm font-semibold ">
             {match.tournament_name}
           </p>
-          <p className="text-slate-700 text-sm font-semibold">
+          <p className="text-slate-900 text-sm font-semibold">
             <DateTime date_time={match.date_time} />
           </p>
         </div>
@@ -99,7 +99,7 @@ function Match({ match }) {
         </span>
       </button>
 
-      <div className="w-full bg-gradient-to-r from-violet-900 to-violet-700 text-white py-1 px-4  font-semibold">
+      <div className="w-full bg-lime-500 text-slate-900 py-1 px-4  font-semibold">
         Score : {match.score}
       </div>
       <div className={`${show ? "block" : "hidden"}`}>

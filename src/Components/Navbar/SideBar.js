@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useContext } from "react";
+import { Link } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import SideMenuItem from "./SideMenuItem";
 
@@ -49,7 +50,28 @@ function SideBar({ showSidebar, setShowSidebar }) {
                         </span>
                         <div className="flex flex-col my-auto">
                           <span className="font-semibold text-md text-white ">
-                            Hello, {user ? user.username : ""}
+                            Hello,{" "}
+                            {user ? (
+                              user.username
+                            ) : (
+                              <div>
+                                <Link
+                                  to="/signin"
+                                  onClick={() => setShowSidebar(false)}
+                                  className="text-yellow-300 underline"
+                                >
+                                  Login
+                                </Link>
+                                <span> or </span>
+                                <Link
+                                  to="/signup"
+                                  onClick={() => setShowSidebar(false)}
+                                  className="text-yellow-300 underline"
+                                >
+                                  Create account
+                                </Link>
+                              </div>
+                            )}
                           </span>
                         </div>
                       </div>

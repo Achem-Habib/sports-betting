@@ -2,7 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useWebSocket from "react-use-websocket";
-import { url, websocket_url } from "../../constants/urls";
+import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
 
 function Header({ showSidebar, setShowSidebar }) {
@@ -12,7 +12,7 @@ function Header({ showSidebar, setShowSidebar }) {
 
   const fixedBalance = parseFloat(balance).toFixed(2);
 
-  useWebSocket(`ws://${websocket_url}/ws/job-status/`, {
+  useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
       setData(message);
@@ -41,11 +41,11 @@ function Header({ showSidebar, setShowSidebar }) {
 
   return (
     <header className=" relative">
-      <div className="flex fixed z-10 items-center justify-between w-full h-12 px-2 mx-auto bg-slate-900 border-b border-gray-500 sm:px-6 lg:px-8 md:h-16">
+      <div className="flex fixed z-10 items-center justify-between w-full h-16 px-2 mx-auto bg-slate-900 border-b border-gray-500 sm:px-6 lg:px-8 ">
         {/*Mobile menu toggle, controls the 'mobileMenuOpen' state.*/}
         <button onClick={() => setShowSidebar(true)} type="button" className="">
           <svg
-            className="w-6 h-6 fill-slate-100 hover:fill-slate-300"
+            className="w-7 h-7 fill-slate-100 hover:fill-slate-300"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
           >
@@ -56,21 +56,21 @@ function Header({ showSidebar, setShowSidebar }) {
 
         <Link
           to="/"
-          className="font-mono font-bold text-xl text-blue-700 mx-auto"
+          className=" font-serif font-bold text-2xl text-lime-400 mx-auto"
         >
-          Sports
+          sports24
         </Link>
 
         {user ? (
-          <div className="md:hidden flex gap-x-1">
-            <span className="flex gap-x-1 bg-white py-1  px-2 rounded-md">
+          <div className="md:hidden flex gap-x-2">
+            <span className="flex gap-x-1 bg-white py-2  px-3 rounded-md">
               <p className="text-slate-800 text-sm my-auto font-semibold">
                 {isNaN(fixedBalance) ? "" : `${fixedBalance}`} tk
               </p>
             </span>
             <Link
               to="/deposit"
-              className="text-fuchsia-500 my-auto  text-center text-2xl  font-semibold"
+              className="text-fuchsia-500 my-auto  text-center text-3xl  font-semibold"
             >
               {user.club_holder ? "" : "+"}
             </Link>
@@ -80,15 +80,15 @@ function Header({ showSidebar, setShowSidebar }) {
         )}
 
         {user ? (
-          <div className="hidden md:flex gap-x-1">
-            <span className="flex gap-x-1 bg-white  px-2 py-1 rounded-md">
+          <div className="hidden md:flex gap-x-2">
+            <span className="flex gap-x-1 bg-white  px-3 py-2 rounded-md">
               <p className="text-slate-800 text-sm my-auto font-semibold">
                 {isNaN(fixedBalance) ? "" : `${fixedBalance}`} tk
               </p>
             </span>
             <Link
               to="/deposit"
-              className="text-fuchsia-500 my-auto  text-center text-2xl  font-semibold"
+              className="text-fuchsia-500 my-auto  text-center text-3xl  font-semibold"
             >
               {user.club_holder ? "" : "+"}
             </Link>

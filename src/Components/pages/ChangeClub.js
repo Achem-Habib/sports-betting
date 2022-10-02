@@ -109,12 +109,18 @@ export default function ChangeClub() {
 
   return (
     <div>
-      <div className="pt-16 md:pt-20 pb-10">
+      <div className="pt-20 pb-10">
         <div className="flex flex-col gap-y-8 mx-2">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-teal-400">
               Change your club
             </h2>
+          </div>
+          <div className="mx-auto">
+            <p className=" text-pink-200 text-center font-semibold text-lg flex  gap-x-2">
+              Your present club:{" "}
+              <span className="text-sky-400">{user.club_name}</span>
+            </p>
           </div>
           <form
             className="mx-auto w-full max-w-md space-y-3"

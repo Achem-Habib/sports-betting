@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
-import { url, websocket_url } from "../../constants/urls";
+import { url } from "../../constants/urls";
 import AuthContext from "../../context/AuthContext";
 import Placebet from "../pages/Placebet";
 
@@ -17,7 +17,7 @@ function BetQuestion({ question, match_info, category }) {
 
   const [data, setData] = useState([]);
 
-  useWebSocket(`ws://${websocket_url}/ws/job-status/`, {
+  useWebSocket(`ws://127.0.0.1:8000/ws/job-status/`, {
     onMessage: (e) => {
       const message = JSON.parse(e.data);
       if (message["Changed"] === "BetRate") {
@@ -60,7 +60,7 @@ function BetQuestion({ question, match_info, category }) {
   return (
     <>
       <div className="border-b border-slate-400 pb-4 mt-2 mb-4 ml-2">
-        <h1 className="text-white text-lg font-semibold mb-2">
+        <h1 className=" text-slate-100 text-lg font-semibold mb-2">
           {question.question}
         </h1>
         <div className="grid grid-cols-2 gap-x-2 gap-y-1">

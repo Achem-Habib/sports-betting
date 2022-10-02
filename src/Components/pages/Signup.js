@@ -68,7 +68,7 @@ export default function Signup() {
   }
 
   return (
-    <div className="pt-16 md:pt-20 pb-20">
+    <div className="pt-20 pb-20">
       <div className=" mx-4">
         <div className="flex flex-col gap-y-8 ">
           <div>

@@ -33,6 +33,24 @@ export default function QuickBet({ setBetAmount }) {
         >
           1000
         </button>
+        <button
+          onClick={() => setBetAmount(2000)}
+          className="bg-blue-700 text-sm text-white py-1 px-4 rounded-md"
+        >
+          2000
+        </button>
+        <button
+          onClick={() => setBetAmount(5000)}
+          className="bg-blue-700 text-sm text-white py-1 px-4 rounded-md"
+        >
+          5000
+        </button>
+        <button
+          onClick={() => setBetAmount(10000)}
+          className="bg-blue-700 text-sm text-white py-1 px-4 rounded-md"
+        >
+          10000
+        </button>
       </div>
     </div>
   );
